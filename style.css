@@ -49,8 +49,15 @@ body {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* Glassmorphism */
@@ -71,6 +78,7 @@ body {
     text-align: center;
     background: linear-gradient(to right, #818cf8, #c084fc);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 
@@ -145,11 +153,42 @@ body {
     margin-bottom: 24px;
 }
 
+.difficulty-badge {
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 8px;
+    background: var(--primary-color);
+    color: white;
+    margin-left: 8px;
+    vertical-align: middle;
+    font-weight: 700;
+    text-transform: uppercase;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.difficulty-badge.badge-easy {
+    background: #10b981;
+}
+
+.difficulty-badge.badge-medium {
+    background: #3b82f6;
+}
+
+.difficulty-badge.badge-hard {
+    background: #f59e0b;
+}
+
+.difficulty-badge.badge-extreme {
+    background: #ef4444;
+}
+
 .quiz-info {
     display: flex;
     justify-content: space-between;
+    align-items: center;
     margin-bottom: 12px;
-    font-size: 0.9rem;
+    font-size: 1rem;
+    font-weight: 700;
 }
 
 .progress-bar-container {
@@ -182,7 +221,7 @@ body {
     max-height: 100%;
     object-fit: contain;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
 .options-grid {
@@ -222,15 +261,33 @@ body {
 }
 
 @keyframes pulseCorrect {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.05); }
-    100% { transform: scale(1); }
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.05);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 
 @keyframes shake {
-    0%, 100% { transform: translateX(0); }
-    25% { transform: translateX(-8px); }
-    75% { transform: translateX(8px); }
+
+    0%,
+    100% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-8px);
+    }
+
+    75% {
+        transform: translateX(8px);
+    }
 }
 
 /* Feedback */
@@ -309,6 +366,11 @@ body {
 }
 
 @keyframes rotation {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
 }
