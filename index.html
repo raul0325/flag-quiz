@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>世界の国旗クイズ - Flag Quiz</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700&family=Noto+Sans+JP:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="app" class="app-container">
+        <!-- メインメニュー -->
+        <main id="menu-screen" class="screen active">
+            <header>
+                <h1 class="title">世界の国旗クイズ</h1>
+                <p class="subtitle">Flag Quiz Masters</p>
+            </header>
+            <div class="menu-content">
+                <div class="stats-summary">
+                    <div class="stat-item">
+                        <span class="stat-label">ハイスコア</span>
+                        <span id="high-score" class="stat-value">0</span>
+                    </div>
+                </div>
+                <button id="start-btn" class="btn btn-primary">クイズを始める</button>
+            </div>
+        </main>
+
+        <!-- クイズ画面 -->
+        <section id="quiz-screen" class="screen">
+            <div class="quiz-header">
+                <div class="quiz-info">
+                    <span id="question-number">第 1 問</span>
+                    <div class="score-container">
+                        <span>スコア: </span>
+                        <span id="current-score">0</span>
+                    </div>
+                </div>
+                <div class="progress-bar-container">
+                    <div id="progress-bar" class="progress-bar"></div>
+                </div>
+            </div>
+
+            <div class="flag-container glass">
+                <img id="flag-image" src="" alt="国旗">
+            </div>
+
+            <div id="options-container" class="options-grid">
+                <!-- 選択肢ボタンがここに入る -->
+            </div>
+
+            <div id="feedback" class="feedback-overlay">
+                <div class="feedback-content">
+                    <span id="feedback-icon"></span>
+                    <span id="feedback-text"></span>
+                </div>
+            </div>
+        </section>
+
+        <!-- 結果画面 -->
+        <section id="result-screen" class="screen">
+            <h2 class="result-title">結果発表</h2>
+            <div class="final-score-container glass">
+                <span class="final-score-label">獲得スコア</span>
+                <span id="final-score" class="final-score-value">0</span>
+            </div>
+            <div class="result-stats">
+                <div class="result-stat-item">
+                    <span>正解数: </span>
+                    <span id="correct-count">0</span>
+                </div>
+            </div>
+            <div class="result-actions">
+                <button id="restart-btn" class="btn btn-primary">もう一度挑戦</button>
+                <button id="back-to-menu-btn" class="btn btn-secondary">メニューに戻る</button>
+            </div>
+        </section>
+
+        <!-- ローディング -->
+        <div id="loading-overlay" class="loading-overlay hidden">
+            <div class="loader"></div>
+            <p>国旗データを取得中...</p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
