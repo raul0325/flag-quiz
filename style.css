@@ -163,6 +163,16 @@ header {
     font-weight: 700;
 }
 
+/* title.png 画像タイトル */
+.title-image {
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
+}
+
 /* Buttons */
 .btn {
     padding: 16px;
