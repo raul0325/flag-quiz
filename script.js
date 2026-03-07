@@ -460,34 +460,42 @@ class FlagQuizGame {
         }
     }
 
-    // 背景に国旗をランダムに散りばめる
+    // 背景に国旗を運動会のように上下に並べる
     spawnBackgroundFlags() {
         const container = document.getElementById('bg-flags');
         if (!container || this.countries.length === 0) return;
 
-        // 全国旗からランダムに35枚選ぶ
-        const shuffled = [...this.countries].sort(() => Math.random() - 0.5).slice(0, 35);
+        // 国旗をシャッフルして上段・下段に分割
+        const shuffled = [...this.countries].sort(() => Math.random() - 0.5);
 
-        shuffled.forEach(country => {
+        // 上段ラベルと下段ラベルのdivを作成
+        const rowTop = document.createElement('div');
+        rowTop.className = 'row-top';
+
+        const rowBottom = document.createElement('div');
+        rowBottom.className = 'row-bottom';
+
+        // 画面横幅に十分な数（余裕を持って40枚）を配置
+        const count = Math.min(shuffled.length, 40);
+        const half = Math.ceil(count / 2);
+
+        for (let i = 0; i < count; i++) {
+            const country = shuffled[i % shuffled.length];
             const img = document.createElement('img');
             img.src = country.flag;
-            img.alt = '';
+            img.alt = country.name;
             img.className = 'bg-flag-item';
+            img.title = country.name;
 
-            // ランダムな位置・サイズ・角度
-            const top = Math.random() * 100;       // 0%〜100%
-            const left = Math.random() * 100;      // 0%〜100%
-            const size = 48 + Math.random() * 56;  // 48〜104px
-            const angle = (Math.random() - 0.5) * 40; // -20度〜+20度
+            if (i < half) {
+                rowTop.appendChild(img);
+            } else {
+                rowBottom.appendChild(img);
+            }
+        }
 
-            img.style.top = `${top}%`;
-            img.style.left = `${left}%`;
-            img.style.width = `${size}px`;
-            img.style.height = `${size * 0.65}px`;
-            img.style.transform = `rotate(${angle}deg)`;
-
-            container.appendChild(img);
-        });
+        container.appendChild(rowTop);
+        container.appendChild(rowBottom);
     }
 }
 
