@@ -219,6 +219,30 @@ header {
     /* スマホでテキストが縦になるのを防ぐ */
 }
 
+/* コンボチャレンジボタン */
+.btn-combo {
+    background: linear-gradient(135deg, #f97316, #ef4444);
+    color: white;
+    box-shadow: 0 4px 14px rgba(249, 115, 22, 0.45);
+    animation: combo-glow 2s ease-in-out infinite alternate;
+}
+
+.btn-combo:hover {
+    background: linear-gradient(135deg, #ea580c, #dc2626);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(249, 115, 22, 0.6);
+}
+
+@keyframes combo-glow {
+    from {
+        box-shadow: 0 4px 14px rgba(249, 115, 22, 0.45);
+    }
+
+    to {
+        box-shadow: 0 4px 24px rgba(239, 68, 68, 0.7);
+    }
+}
+
 .btn-primary {
     background: var(--primary-color);
     color: white;

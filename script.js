@@ -15,6 +15,10 @@ class FlagQuizGame {
         this.perfectCount = parseInt(localStorage.getItem('flagQuizPerfectCount') || '0', 10);
         this.playCount = parseInt(localStorage.getItem('flagQuizPlayCount') || '0', 10);
 
+        // コンボチャレンジ用
+        this.comboMode = false;
+        this.comboHighScore = parseInt(localStorage.getItem('flagQuizComboHighScore') || '0', 10);
+
         // 有名な国の定義（日本語名でマッチング）
         // レベル1: 超有名・よく聞く国 (約30カ国)
         // レベル2: 有名・スポーツやニュースで聞く国 (約25カ国)
@@ -66,6 +70,7 @@ class FlagQuizGame {
 
     async init() {
         this.updateHighScoreDisplay();
+        this.updateComboHighScoreDisplay();
         this.checkUnlockStatus();
         this.updateSoundIcon();
         this.attachEventListeners();
@@ -96,6 +101,12 @@ class FlagQuizGame {
         // 記録画面の開閉
         this.recordBtn.addEventListener('click', () => this.showRecordScreen());
         this.closeRecordBtn.addEventListener('click', () => this.showScreen('menu'));
+
+        // コンボチャレンジボタン
+        const comboBtn = document.getElementById('combo-btn');
+        if (comboBtn) {
+            comboBtn.addEventListener('click', () => this.startComboChallenge());
+        }
 
         // 音のトグル
         if (this.soundToggleBtn) {
@@ -199,6 +210,7 @@ class FlagQuizGame {
         document.getElementById('record-play-count').textContent = this.playCount;
         document.getElementById('record-high-score').textContent = this.highScore;
         document.getElementById('record-perfect-count').textContent = this.perfectCount;
+        document.getElementById('record-combo-score').textContent = this.comboHighScore + ' pt';
         this.showScreen('record');
     }
 
@@ -280,6 +292,31 @@ class FlagQuizGame {
         this.nextQuestion();
     }
 
+    startComboChallenge() {
+        // コンボチャレンジモードを開始
+        this.initAudio();
+        if (this.soundEnabled && this.bgmAudio) {
+            this.bgmAudio.play().catch(e => console.log('BGM再生エラー:', e));
+        }
+
+        this.playCount++;
+        localStorage.setItem('flagQuizPlayCount', this.playCount);
+
+        this.comboMode = true;
+        this.score = 0;
+        this.questionsCount = 0;
+        this.difficultyOffset = 0;
+        this.usedIndices.clear();
+        this.updateScoreDisplay();
+        this.showScreen('quiz');
+        this.nextQuestion();
+    }
+
+    updateComboHighScoreDisplay() {
+        const el = document.getElementById('combo-high-score');
+        if (el) el.textContent = this.comboHighScore;
+    }
+
     getCurrentPool() {
         // questionsCount + offset で難易度のプールを選択（常に10問分進む）
         const level = this.questionsCount + (this.difficultyOffset || 0);
@@ -291,17 +328,15 @@ class FlagQuizGame {
 
     getDifficultyInfo() {
         const level = this.questionsCount + (this.difficultyOffset || 0);
-        if (level <= 3) return { label: "かんたん", class: "badge-easy" };
-        if (level <= 5) return { label: "ふつう", class: "badge-medium" };
-        if (level <= 8) return { label: "むずかしい", class: "badge-hard" };
-        return { label: "激ムズ！", class: "badge-extreme" };
+        if (level <= 3) return { label: "かんたん", class: "badge-easy", points: 10 };
+        if (level <= 5) return { label: "ふつう", class: "badge-medium", points: 20 };
+        if (level <= 8) return { label: "むずかしい", class: "badge-hard", points: 30 };
+        return { label: "激ムズ！", class: "badge-extreme", points: 50 };
     }
 
     nextQuestion() {
-        // オフセットにより maxQuestions を超える場合は終了（実質プレイ問題数は10問で固定せず、到達点で判定）
-        // 実際には10回解かせるため、maxQuestions ではなく fixed_turns で管理するべきだが、
-        // 今回の仕様設計としては「問題番号の表示」として 10 で終了とする
-        if (this.questionsCount >= this.maxQuestions) {
+        // 通常モード: 10問で終了、コンボモード: 終了なし（handleAnswerで不正解時に終了）
+        if (!this.comboMode && this.questionsCount >= this.maxQuestions) {
             this.endGame();
             return;
         }
@@ -312,8 +347,14 @@ class FlagQuizGame {
         // オフセット開始時は1問目からカウントアップする表示調整も可能だが、
         // 今回は「第X問」ではなく「（残り問題数）」にしなくても良い。
         // シンプルに「現在のレベル」を見せる。
-        this.questionNumberDisplay.innerHTML = `第 ${this.questionsCount} 問 <span class="difficulty-badge ${diffInfo.class}">${diffInfo.label}</span>`;
-        this.progressBar.style.width = `${(this.questionsCount / this.maxQuestions) * 100}%`;
+        this.questionNumberDisplay.innerHTML = `第 ${this.questionsCount} 問 <span class="difficulty-badge ${diffInfo.class}">${diffInfo.label}${this.comboMode ? ' +' + diffInfo.points + 'pt' : ''}</span>`;
+        if (!this.comboMode) {
+            this.progressBar.style.width = `${(this.questionsCount / this.maxQuestions) * 100}%`;
+        } else {
+            // コンボモード: プログレスバーは燃えるアニメーション風に常に100%でグラデーション
+            this.progressBar.style.width = '100%';
+            this.progressBar.style.background = 'linear-gradient(90deg, #f97316, #ef4444, #f97316)';
+        }
 
         // 出題プールを取得
         const pool = this.getCurrentPool();
@@ -372,7 +413,9 @@ class FlagQuizGame {
         if (isCorrect) {
             this.playSound('correct');
             selectedButton.classList.add('correct');
-            this.score += 10;
+            // コンボモード: 難易度別の点数、通常モード: 10点固定
+            const diffInfo = this.getDifficultyInfo();
+            this.score += this.comboMode ? diffInfo.points : 10;
             this.updateScoreDisplay();
             feedbackIcon.textContent = '';
             feedbackText.textContent = '〇'; // 大正解から〇に変更
@@ -430,24 +473,53 @@ class FlagQuizGame {
             setTimeout(() => {
                 feedbackOverlay.addEventListener('click', advanceQuiz);
             }, 500);
+
+            // コンボモード: 不正解で即終了
+            if (this.comboMode) {
+                // タップ待ちの間に endGame をセットし、次の問題ではなく終了画面へ
+                const originalAdvance = advanceQuiz;
+                feedbackOverlay.removeEventListener('click', advanceQuiz);
+                const endCombo = () => {
+                    feedbackOverlay.classList.remove('active');
+                    feedbackOverlay.classList.remove('interactive');
+                    feedbackOverlay.removeEventListener('click', endCombo);
+                    feedbackText.style.fontSize = '';
+                    this.endGame();
+                };
+                setTimeout(() => {
+                    feedbackOverlay.addEventListener('click', endCombo);
+                }, 500);
+            }
         }
     }
 
     endGame() {
-        if (this.score > this.highScore) {
-            this.highScore = this.score;
-            localStorage.setItem('flagQuizHighScore', this.highScore);
-            this.updateHighScoreDisplay();
+        if (this.comboMode) {
+            // コンボモードの終了処理
+            if (this.score > this.comboHighScore) {
+                this.comboHighScore = this.score;
+                localStorage.setItem('flagQuizComboHighScore', this.comboHighScore);
+                this.updateComboHighScoreDisplay();
+            }
+            this.finalScoreDisplay.textContent = this.score + ' pt';
+        } else {
+            // 通常モードの終了処理
+            if (this.score > this.highScore) {
+                this.highScore = this.score;
+                localStorage.setItem('flagQuizHighScore', this.highScore);
+                this.updateHighScoreDisplay();
+            }
+            // 100点（満点）だったら回数を記録
+            if (this.score === (this.maxQuestions * 10)) {
+                this.perfectCount++;
+                localStorage.setItem('flagQuizPerfectCount', this.perfectCount);
+            }
+            this.finalScoreDisplay.textContent = this.score;
         }
 
-        // 100点（満点）だったら回数を記録
-        if (this.score === (this.maxQuestions * 10)) {
-            this.perfectCount++;
-            localStorage.setItem('flagQuizPerfectCount', this.perfectCount);
-        }
-
-        this.finalScoreDisplay.textContent = this.score;
-        // 「正解数：7/10」の表示はHTMLから削除するため、ここでの更新処理も削除
+        this.comboMode = false; // モードをリセット
+        // プログレスバーを通常に戻す
+        this.progressBar.style.background = '';
         this.showScreen('result');
     }
 
