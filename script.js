@@ -353,8 +353,8 @@ class FlagQuizGame {
             this.progressBar.style.background = 'linear-gradient(90deg, #f97316, #ef4444, #f97316)';
         }
 
-        // 出題プールを取得
-        const pool = this.getCurrentPool();
+        // 出題プールを取得（コンボモードは全国旗からランダム）
+        const pool = this.comboMode ? this.countries : this.getCurrentPool();
 
         // 正解の国を選択
         let correctCountry;
