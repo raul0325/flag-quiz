@@ -81,7 +81,13 @@ class FlagQuizGame {
         this.startBtn.addEventListener('click', () => this.startGame(0));
         this.startHardBtn.addEventListener('click', () => this.startGame(3)); // ふつう（4問目基準）からスタート
         this.startExtremeBtn.addEventListener('click', () => this.startGame(5)); // むずかしい（6問目基準）からスタート
-        this.restartBtn.addEventListener('click', () => this.startGame(0));
+        this.restartBtn.addEventListener('click', () => {
+            if (this.lastComboMode) {
+                this.startComboChallenge();
+            } else {
+                this.startGame(0);
+            }
+        });
         this.backToMenuBtn.addEventListener('click', () => {
             this.checkUnlockStatus();
             this.showScreen('menu');
@@ -531,6 +537,7 @@ class FlagQuizGame {
             this.finalScoreDisplay.textContent = this.score;
         }
 
+        this.lastComboMode = this.comboMode; // 「もう一度挑戦」用に記憶
         this.comboMode = false; // モードをリセット
         // プログレスバーを通常に戻す
         this.progressBar.style.background = '';
