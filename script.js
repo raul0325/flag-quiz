@@ -194,13 +194,10 @@ class FlagQuizGame {
     }
 
     checkUnlockStatus() {
-        const unlockMessage = document.getElementById('unlock-message');
         if (this.perfectCount >= 1) { // 3回から1回へ緩和
-            unlockMessage.classList.remove('hidden');
             this.startHardBtn.classList.remove('hidden');
             this.startExtremeBtn.classList.remove('hidden');
         } else {
-            unlockMessage.classList.add('hidden');
             this.startHardBtn.classList.add('hidden');
             this.startExtremeBtn.classList.add('hidden');
         }
