@@ -50,8 +50,15 @@
 
 #bg-flags .row-bottom {
     bottom: 0;
-    display: none;
-    /* コンテンツと重なるため非表示 */
+    /* 両端だけ表示し、中央（コンテンツと重なる部分）をフェードアウト */
+    -webkit-mask-image: linear-gradient(to right,
+            black 0%, black 15%,
+            transparent 28%, transparent 72%,
+            black 85%, black 100%);
+    mask-image: linear-gradient(to right,
+            black 0%, black 15%,
+            transparent 28%, transparent 72%,
+            black 85%, black 100%);
 }
 
 /* 各国旗小画像のスタイル */
