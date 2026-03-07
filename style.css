@@ -134,12 +134,16 @@ body {
 
 .btn-secondary {
     background: var(--glass-bg);
-    color: white;
-    border: 1px solid var(--glass-border);
+    color: var(--text-color);
+    /* 背景が明るいので文字色を濃く */
+    border: 2px solid var(--glass-border);
+    /* 少し見やすくする */
 }
 
 .btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.8);
+    /* ホバー時は白っぽく */
+    color: var(--primary-color);
 }
 
 /* Menu Stats */
