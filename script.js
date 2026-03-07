@@ -24,6 +24,10 @@ class FlagQuizGame {
             lv3: ["チェコ", "ハンガリー", "ルーマニア", "セルビア", "クロアチア", "アイルランド", "アイスランド", "カタール", "パキスタン", "バングラデシュ", "スリランカ", "ネパール", "キューバ", "パナマ", "コスタリカ", "ウルグアイ", "パラグアイ", "ボリビア", "エクアドル", "ベネズエラ"]
         };
 
+        // 音のON/OFF状態（LocalStorageから読み込み）
+        this.soundEnabled = localStorage.getItem('flagQuizSound') !== 'false'; // デフォルトtrue
+        this.audioCtx = null;
+
         // UI Elements
         this.screens = {
             menu: document.getElementById('menu-screen'),
@@ -41,6 +45,10 @@ class FlagQuizGame {
         this.backToMenuBtn = document.getElementById('back-to-menu-btn');
         this.recordBtn = document.getElementById('record-btn');
         this.closeRecordBtn = document.getElementById('close-record-btn');
+        this.soundToggleBtn = document.getElementById('sound-toggle-btn'); // 追加
+
+        // BGM 要素
+        this.bgmAudio = document.getElementById('bgm');
 
         // Stats
         this.highScoreDisplay = document.getElementById('high-score');
@@ -59,6 +67,7 @@ class FlagQuizGame {
     async init() {
         this.updateHighScoreDisplay();
         this.checkUnlockStatus();
+        this.updateSoundIcon();
         this.attachEventListeners();
         await this.loadCountryData();
     }
@@ -76,11 +85,95 @@ class FlagQuizGame {
         // 記録画面の開閉
         this.recordBtn.addEventListener('click', () => this.showRecordScreen());
         this.closeRecordBtn.addEventListener('click', () => this.showScreen('menu'));
+
+        // 音のトグル
+        if (this.soundToggleBtn) {
+            this.soundToggleBtn.addEventListener('click', () => this.toggleSound());
+        }
+    }
+
+    toggleSound() {
+        this.soundEnabled = !this.soundEnabled;
+        localStorage.setItem('flagQuizSound', this.soundEnabled);
+        this.updateSoundIcon();
+
+        if (this.soundEnabled) {
+            this.initAudio();
+            if (this.bgmAudio) this.bgmAudio.play().catch(e => console.log("BGM再生不可:", e));
+        } else {
+            if (this.bgmAudio) this.bgmAudio.pause();
+        }
+    }
+
+    updateSoundIcon() {
+        if (this.soundToggleBtn) {
+            this.soundToggleBtn.textContent = this.soundEnabled ? '🔊 音あり' : '🔇 音なし';
+        }
+        if (this.soundEnabled && this.bgmAudio && this.bgmAudio.paused) {
+            // 自動再生はブラウザにブロックされる可能性があるので何もしない
+        } else if (!this.soundEnabled && this.bgmAudio) {
+            this.bgmAudio.pause();
+        }
+    }
+
+    initAudio() {
+        if (!this.soundEnabled) return;
+        if (!this.audioCtx) {
+            this.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (this.audioCtx.state === 'suspended') {
+            this.audioCtx.resume();
+        }
+    }
+
+    playSound(type) {
+        if (!this.soundEnabled) return;
+        this.initAudio();
+
+        const actx = this.audioCtx;
+        if (!actx) return;
+
+        const osc = actx.createOscillator();
+        const gain = actx.createGain();
+        osc.connect(gain);
+        gain.connect(actx.destination);
+
+        const now = actx.currentTime;
+
+        if (type === 'correct') {
+            // ピコーン！ (正解音: 高音で2連続) A5 -> E6
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(880, now);
+            osc.frequency.setValueAtTime(1318.51, now + 0.1);
+
+            gain.gain.setValueAtTime(0, now);
+            gain.gain.linearRampToValueAtTime(0.5, now + 0.05);
+            gain.gain.linearRampToValueAtTime(0, now + 0.4);
+
+            osc.start(now);
+            osc.stop(now + 0.5);
+        } else if (type === 'wrong') {
+            // ブブー (不正解音: 低音で2連続)
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(150, now);
+            osc.frequency.setValueAtTime(150, now + 0.15);
+            osc.frequency.setValueAtTime(120, now + 0.2);
+
+            gain.gain.setValueAtTime(0, now);
+            gain.gain.linearRampToValueAtTime(0.3, now + 0.05);
+            gain.gain.setValueAtTime(0.3, now + 0.15);
+            gain.gain.linearRampToValueAtTime(0, now + 0.2);
+            gain.gain.linearRampToValueAtTime(0.3, now + 0.25);
+            gain.gain.linearRampToValueAtTime(0, now + 0.4);
+
+            osc.start(now);
+            osc.stop(now + 0.5);
+        }
     }
 
     checkUnlockStatus() {
         const unlockMessage = document.getElementById('unlock-message');
-        if (this.perfectCount >= 3) {
+        if (this.perfectCount >= 1) { // 3回から1回へ緩和
             unlockMessage.classList.remove('hidden');
             this.startHardBtn.classList.remove('hidden');
             this.startExtremeBtn.classList.remove('hidden');
@@ -138,6 +231,12 @@ class FlagQuizGame {
     }
 
     startGame(difficultyOffset = 0) {
+        // 音声を初期化・BGMをスタートさせる
+        this.initAudio();
+        if (this.soundEnabled && this.bgmAudio) {
+            this.bgmAudio.play().catch(e => console.log('BGM再生エラー:', e));
+        }
+
         this.playCount++;
         localStorage.setItem('flagQuizPlayCount', this.playCount);
 
@@ -234,30 +333,34 @@ class FlagQuizGame {
         const feedbackIcon = document.getElementById('feedback-icon');
         const feedbackText = document.getElementById('feedback-text');
 
-        // 正解表示用の詳細エリア（HTMLに追加予定）
         const feedbackDetails = document.getElementById('feedback-details');
 
         if (isCorrect) {
+            this.playSound('correct');
             selectedButton.classList.add('correct');
             this.score += 10;
             this.updateScoreDisplay();
-            feedbackIcon.textContent = '✅';
-            feedbackText.textContent = '大正解！';
+            feedbackIcon.textContent = '';
+            feedbackText.textContent = '〇'; // 大正解から〇に変更
             feedbackText.style.color = '#10b981';
+            feedbackText.style.fontSize = '8rem'; // でかくする
             feedbackDetails.style.display = 'none'; // 正解時は詳細を隠す
             feedbackOverlay.classList.remove('interactive'); // タップ待ちはしない
 
             feedbackOverlay.classList.add('active');
             setTimeout(() => {
                 feedbackOverlay.classList.remove('active');
+                feedbackText.style.fontSize = ''; // 復元
                 this.nextQuestion();
-            }, 1200);
+            }, 1000); // すこし短くしてテンポアップ
 
         } else {
+            this.playSound('wrong');
             selectedButton.classList.add('wrong');
-            feedbackIcon.textContent = '❌';
-            feedbackText.textContent = 'ざんねん...';
+            feedbackIcon.textContent = '';
+            feedbackText.textContent = '✖'; // 残念から✖に変更
             feedbackText.style.color = '#ef4444';
+            feedbackText.style.fontSize = '8rem';
 
             // 不正解時は正解の国旗と国名を表示してタップ待ちにする
             feedbackDetails.innerHTML = `
@@ -285,6 +388,7 @@ class FlagQuizGame {
                 feedbackOverlay.classList.remove('active');
                 feedbackOverlay.classList.remove('interactive');
                 feedbackOverlay.removeEventListener('click', advanceQuiz);
+                feedbackText.style.fontSize = ''; // 復元
                 this.nextQuestion();
             };
 

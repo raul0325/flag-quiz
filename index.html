@@ -14,6 +14,9 @@
 </head>
 
 <body>
+    <!-- ユーザーが bgm.mp3 をフォルダに置けば流れるようにする -->
+    <audio id="bgm" src="bgm.mp3" loop preload="auto"></audio>
+
     <div id="app" class="app-container">
         <!-- メインメニュー -->
         <main id="menu-screen" class="screen active">
@@ -22,6 +25,15 @@
                 <p class="subtitle">Flag Quiz Masters</p>
             </header>
             <div class="menu-content">
+                <!-- 音声ON/OFFコントロール -->
+                <div style="text-align: center; margin-bottom: 24px;">
+                    <button id="sound-toggle-btn" class="btn btn-secondary"
+                        style="padding: 8px 16px; font-size: 0.9rem; border-radius: 20px; width: auto; max-width: none;">🔊
+                        音あり</button>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 8px;">※bgm.mp3をフォルダに入れると音楽が流れます
+                    </p>
+                </div>
+
                 <div class="stats-summary">
                     <div class="stat-item">
                         <span class="stat-label">ハイスコア</span>
@@ -117,7 +129,7 @@
             <div class="unlock-info glass"
                 style="width: 100%; padding: 16px; margin-bottom: 32px; background: rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3);">
                 <p style="text-align: center; font-size: 0.9rem; margin-bottom: 8px;">💡 ヒント</p>
-                <p style="text-align: center; font-size: 0.9rem; color: #cbd5e1;">100点を3回とると、むずかしいモードが出てくるよ！</p>
+                <p style="text-align: center; font-size: 0.9rem; color: #cbd5e1;">100点を1回とると、むずかしいモードが出てくるよ！</p>
             </div>
 
             <button id="close-record-btn" class="btn btn-secondary">もどる</button>
