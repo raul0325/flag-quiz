@@ -1,28 +1,53 @@
 :root {
-    --primary-color: #3b82f6;
-    /* ポップな青色に */
-    --primary-hover: #2563eb;
-    --secondary-color: #f43f5e;
-    /* ポップなピンク/赤色に */
+    --primary-color: #4f46e5;
+    --primary-hover: #4338ca;
+    --secondary-color: #ec4899;
 
-    /* 背景を明るいドット柄/水玉風に見立てた爽やかなグラデーションに */
-    --bg-gradient: radial-gradient(circle at 10% 20%, rgb(253, 239, 232) 0%, rgb(224, 243, 252) 90%);
+    /* 熺色の背景に戻す */
+    --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
 
-    /* 明るい背景に合うようにガラスパネルを白っぽく */
-    --glass-bg: rgba(255, 255, 255, 0.4);
-    --glass-border: rgba(255, 255, 255, 0.6);
+    /* ガラスパネルも暗背景用に戻す */
+    --glass-bg: rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(255, 255, 255, 0.2);
 
-    /* 文字色を濃い色に */
-    --text-color: #1e293b;
-    --text-muted: #64748b;
+    /* 文字色も白に戻す */
+    --text-color: #ffffff;
+    --text-muted: #94a3b8;
 
-    /* 〇✖の色変更（日本式に合わせる） */
-    --correct-color: #ef4444;
-    /* 赤 */
-    --wrong-color: #3b82f6;
-    /* 青 */
+    /* 〇✖の色（日本式：〇=赤 ✖=青） → JS側で個別指定するのでここは枚線専用 */
+    --correct-color: #10b981;
+    /* 正解の枠線 = 緑 */
+    --wrong-color: #ef4444;
+    /* 不正解の枠線 = 赤 */
 
     --font-main: 'Outfit', 'Noto Sans JP', sans-serif;
+}
+
+/* 背景に浮かぶ国旗デコレーションのコンテナ */
+#bg-flags {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+}
+
+/* 各国旗小画像のスタイル */
+.bg-flag-item {
+    position: absolute;
+    width: 64px;
+    height: 40px;
+    object-fit: contain;
+    border-radius: 4px;
+    opacity: 0.12;
+    /* 少し透かして背景っぽく */
+    filter: blur(0.5px);
+}
+
+/* アプリコンテナはz-indexで背景国旗の上にする */
+.app-container {
+    position: relative;
+    z-index: 1;
 }
 
 * {
@@ -40,13 +65,6 @@ body {
     justify-content: center;
     align-items: center;
     overflow-x: hidden;
-}
-
-.app-container {
-    width: 100%;
-    max-width: 500px;
-    padding: 20px;
-    position: relative;
 }
 
 .screen {
@@ -135,15 +153,13 @@ body {
 .btn-secondary {
     background: var(--glass-bg);
     color: var(--text-color);
-    /* 背景が明るいので文字色を濃く */
-    border: 2px solid var(--glass-border);
-    /* 少し見やすくする */
+    /* 白 */
+    border: 1px solid var(--glass-border);
 }
 
 .btn-secondary:hover {
-    background: rgba(255, 255, 255, 0.8);
-    /* ホバー時は白っぽく */
-    color: var(--primary-color);
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
 }
 
 /* Menu Stats */
@@ -333,7 +349,7 @@ body {
 
 .option-btn {
     padding: 16px;
-    background: rgba(255, 255, 255, 0.8);
+    background: rgba(255, 255, 255, 0.1);
     border: 2px solid var(--glass-border);
     border-radius: 12px;
     color: var(--text-color);
@@ -348,24 +364,27 @@ body {
 }
 
 .option-btn:hover {
-    background: rgba(255, 255, 255, 1);
+    background: rgba(255, 255, 255, 0.2);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .option-btn.correct {
-    background: #fee2e2;
-    /* 正解（赤系）の明るい背景 */
-    border-color: var(--correct-color);
-    color: var(--correct-color);
+    background: rgba(16, 185, 129, 0.2);
+    /* 緑の半透明背景 */
+    border-color: #10b981;
+    /* 緑枚線 */
+    border-width: 3px;
+    color: #ffffff;
     animation: pulseCorrect 0.5s ease;
 }
 
 .option-btn.wrong {
-    background: #e0e7ff;
-    /* 不正解（青系）の明るい背景 */
-    border-color: var(--wrong-color);
-    color: var(--wrong-color);
+    background: rgba(239, 68, 68, 0.2);
+    /* 赤の半透明背景 */
+    border-color: #ef4444;
+    /* 赤枚線 */
+    border-width: 3px;
+    color: #ffffff;
     animation: shake 0.4s ease;
 }
 

@@ -232,6 +232,10 @@ class FlagQuizGame {
             });
 
             console.log(`データを読み込みました: Lv1:${this.levels[1].length}, Lv2:${this.levels[2].length}, Lv3:${this.levels[3].length}, Lv4:${this.levels[4].length}`);
+
+            // 背景に国旗を散りばめる
+            this.spawnBackgroundFlags();
+
         } catch (error) {
             console.error('データ取得エラー:', error);
             alert('国旗データの取得に失敗しました。');
@@ -454,6 +458,36 @@ class FlagQuizGame {
             const j = Math.floor(Math.random() * (i + 1));
             [array[i], array[j]] = [array[j], array[i]];
         }
+    }
+
+    // 背景に国旗をランダムに散りばめる
+    spawnBackgroundFlags() {
+        const container = document.getElementById('bg-flags');
+        if (!container || this.countries.length === 0) return;
+
+        // 全国旗からランダムに35枚選ぶ
+        const shuffled = [...this.countries].sort(() => Math.random() - 0.5).slice(0, 35);
+
+        shuffled.forEach(country => {
+            const img = document.createElement('img');
+            img.src = country.flag;
+            img.alt = '';
+            img.className = 'bg-flag-item';
+
+            // ランダムな位置・サイズ・角度
+            const top = Math.random() * 100;       // 0%〜100%
+            const left = Math.random() * 100;      // 0%〜100%
+            const size = 48 + Math.random() * 56;  // 48〜104px
+            const angle = (Math.random() - 0.5) * 40; // -20度〜+20度
+
+            img.style.top = `${top}%`;
+            img.style.left = `${left}%`;
+            img.style.width = `${size}px`;
+            img.style.height = `${size * 0.65}px`;
+            img.style.transform = `rotate(${angle}deg)`;
+
+            container.appendChild(img);
+        });
     }
 }
 
