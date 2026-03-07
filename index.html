@@ -24,7 +24,7 @@
 
     <div id="app" class="app-container">
         <!-- メインメニュー -->
-        <main id="menu-screen" class="screen active">
+        <main id="menu-screen" class="screen main-panel active">
             <header>
                 <img src="title.png" alt="世界の国旗クイズ - Flag Quiz Masters" class="title-image">
                 <button id="sound-toggle-btn" class="btn btn-secondary"
@@ -47,8 +47,13 @@
                 </div>
                 <div id="mode-buttons" class="mode-buttons-container">
                     <button id="start-btn" class="btn btn-primary" data-mode="1">クイズ☆スタート！</button>
-                    <button id="start-hard-btn" class="btn btn-warning hidden" data-mode="2">ふつうからスタート</button>
-                    <button id="start-extreme-btn" class="btn btn-danger hidden" data-mode="3">むずかしいからスタート</button>
+                    <!-- ふつう・むずかしいボタンを横並びに -->
+                    <div style="display: flex; gap: 12px; width: 100%;">
+                        <button id="start-hard-btn" class="btn btn-warning hidden" data-mode="2"
+                            style="flex: 1; font-size: 0.9rem; padding: 12px 0;">ふつうからスタート</button>
+                        <button id="start-extreme-btn" class="btn btn-danger hidden" data-mode="3"
+                            style="flex: 1; font-size: 0.9rem; padding: 12px 0;">むずかしいから開始</button>
+                    </div>
                 </div>
                 <button id="record-btn" class="btn-image" style="margin-top: 12px;"><img src="rec.png" alt="国旗マスターズレコード"
                         class="btn-image-img"></button>
@@ -62,7 +67,7 @@
         </main>
 
         <!-- クイズ画面 -->
-        <section id="quiz-screen" class="screen">
+        <section id="quiz-screen" class="screen main-panel">
             <div class="quiz-header">
                 <div class="quiz-info">
                     <button id="back-btn" class="back-btn">← もどる</button>
@@ -99,7 +104,7 @@
         </section>
 
         <!-- 結果画面 -->
-        <section id="result-screen" class="screen">
+        <section id="result-screen" class="screen main-panel">
             <h2 class="result-title">結果発表</h2>
             <div class="final-score-container glass">
                 <span class="final-score-label">獲得スコア</span>
@@ -112,7 +117,7 @@
         </section>
 
         <!-- 記録画面 -->
-        <section id="record-screen" class="screen">
+        <section id="record-screen" class="screen main-panel">
             <header>
                 <img src="rec.png" alt="国旗マスターズレコード" class="title-image">
             </header>
