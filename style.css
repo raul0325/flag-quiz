@@ -136,6 +136,7 @@ body {
     width: 92%;
     margin-top: 16px;
     margin-bottom: 16px;
+    color: #334155;
 }
 
 /* header: 透過画像のためパネル不要。シンプルな中央寄せのみ */
@@ -288,7 +289,8 @@ header {
 
 .stat-label {
     font-size: 0.9rem;
-    color: var(--text-muted);
+    color: #64748b;
+    /* パネル上のラベルは見やすい濃いグレーに */
 }
 
 .stat-value {
