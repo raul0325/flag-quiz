@@ -50,6 +50,8 @@
 
 #bg-flags .row-bottom {
     bottom: 0;
+    display: none;
+    /* コンテンツと重なるため非表示 */
 }
 
 /* 各国旗小画像のスタイル */
@@ -121,17 +123,14 @@ body {
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
-/* header: 背景国旗からタイトルを守るためのガラスパネル */
+/* header: 透過画像のためパネル不要。シンプルな中央寄せのみ */
 header {
-    background: rgba(15, 23, 42, 0.7);
-    padding: 24px 16px;
-    border-radius: 24px;
-    margin-bottom: 40px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
     text-align: center;
+    padding: 16px 0 32px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    margin-bottom: 16px;
 }
 
 /* Typography */
