@@ -272,7 +272,8 @@ class FlagQuizGame {
         localStorage.setItem('flagQuizPlayCount', this.playCount);
 
         this.score = 0;
-        this.questionsCount = difficultyOffset; // ベースの難易度を底上げする
+        this.questionsCount = 0;       // 常に0からスタートして必ず10問
+        this.difficultyOffset = difficultyOffset; // 難易度判定用のオフセット
         this.usedIndices.clear();
         this.updateScoreDisplay();
         this.showScreen('quiz');
@@ -280,17 +281,19 @@ class FlagQuizGame {
     }
 
     getCurrentPool() {
-        // 問題数に応じて出題プールを選択
-        if (this.questionsCount <= 3) return this.levels[1];      // 1-3問: 超初級
-        if (this.questionsCount <= 5) return this.levels[2];      // 4-5問: 初級
-        if (this.questionsCount <= 8) return this.levels[3];      // 6-8問: 中級
-        return this.levels[4];                                   // 9-10問: 上級（その他すべて）
+        // questionsCount + offset で難易度のプールを選択（常に10問分進む）
+        const level = this.questionsCount + (this.difficultyOffset || 0);
+        if (level <= 3) return this.levels[1];      // かんたん
+        if (level <= 5) return this.levels[2];      // ふつう
+        if (level <= 8) return this.levels[3];      // むずかしい
+        return this.levels[4];                      // 激ムズ！
     }
 
     getDifficultyInfo() {
-        if (this.questionsCount <= 3) return { label: "かんたん", class: "badge-easy" };
-        if (this.questionsCount <= 5) return { label: "ふつう", class: "badge-medium" };
-        if (this.questionsCount <= 8) return { label: "むずかしい", class: "badge-hard" };
+        const level = this.questionsCount + (this.difficultyOffset || 0);
+        if (level <= 3) return { label: "かんたん", class: "badge-easy" };
+        if (level <= 5) return { label: "ふつう", class: "badge-medium" };
+        if (level <= 8) return { label: "むずかしい", class: "badge-hard" };
         return { label: "激ムズ！", class: "badge-extreme" };
     }
 
