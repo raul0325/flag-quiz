@@ -202,9 +202,16 @@ class FlagQuizGame {
             // 日本語名がある国のみをフィルタリング
             this.countries = data.map(country => {
                 const commonName = country.translations?.jpn?.common || country.name.common;
+                let flagUrl = country.flags.svg || country.flags.png;
+
+                // ベネズエラの国旗を「左上に紋章（イラスト）がある政府旗」に差し替え
+                if (commonName === 'ベネズエラ') {
+                    flagUrl = 'https://upload.wikimedia.org/wikipedia/commons/0/06/Flag_of_Venezuela.svg';
+                }
+
                 return {
                     name: commonName,
-                    flag: country.flags.svg || country.flags.png
+                    flag: flagUrl
                 };
             }).filter(c => c.name && c.flag);
 
