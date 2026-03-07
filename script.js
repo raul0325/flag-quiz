@@ -331,6 +331,14 @@ class FlagQuizGame {
         return { label: "激ムズ！", class: "badge-extreme", points: 50 };
     }
 
+    // 国名からその国の難易度を判定（コンボモード用）
+    getCountryDifficultyInfo(countryName) {
+        if (this.famousCountries.lv1.includes(countryName)) return { label: "かんたん", class: "badge-easy", points: 10 };
+        if (this.famousCountries.lv2.includes(countryName)) return { label: "ふつう", class: "badge-medium", points: 20 };
+        if (this.famousCountries.lv3.includes(countryName)) return { label: "むずかしい", class: "badge-hard", points: 30 };
+        return { label: "激ムズ！", class: "badge-extreme", points: 50 };
+    }
+
     nextQuestion() {
         // 通常モード: 10問で終了、コンボモード: 終了なし（handleAnswerで不正解時に終了）
         if (!this.comboMode && this.questionsCount >= this.maxQuestions) {
@@ -339,16 +347,15 @@ class FlagQuizGame {
         }
 
         this.questionsCount++;
-        const diffInfo = this.getDifficultyInfo();
 
-        // オフセット開始時は1問目からカウントアップする表示調整も可能だが、
-        // 今回は「第X問」ではなく「（残り問題数）」にしなくても良い。
-        // シンプルに「現在のレベル」を見せる。
-        this.questionNumberDisplay.innerHTML = `第 ${this.questionsCount} 問 <span class="difficulty-badge ${diffInfo.class}">${diffInfo.label}${this.comboMode ? ' +' + diffInfo.points + 'pt' : ''}</span>`;
+        // 通常モードのバッジ（問題番号ベース）
         if (!this.comboMode) {
+            const diffInfo = this.getDifficultyInfo();
+            this.questionNumberDisplay.innerHTML = `第 ${this.questionsCount} 問 <span class="difficulty-badge ${diffInfo.class}">${diffInfo.label}</span>`;
             this.progressBar.style.width = `${(this.questionsCount / this.maxQuestions) * 100}%`;
         } else {
-            // コンボモード: プログレスバーは燃えるアニメーション風に常に100%でグラデーション
+            // コンボモード: バッジは国選択後に更新
+            this.questionNumberDisplay.innerHTML = `第 ${this.questionsCount} 問`;
             this.progressBar.style.width = '100%';
             this.progressBar.style.background = 'linear-gradient(90deg, #f97316, #ef4444, #f97316)';
         }
@@ -367,6 +374,13 @@ class FlagQuizGame {
 
         this.usedIndices.add(correctCountry.name);
         this.currentQuestion = correctCountry;
+
+        // コンボモード: 選ばれた国の難易度でバッジを表示
+        if (this.comboMode) {
+            const cDiff = this.getCountryDifficultyInfo(correctCountry.name);
+            this.currentComboDiff = cDiff; // handleAnswerで使う
+            this.questionNumberDisplay.innerHTML = `第 ${this.questionsCount} 問 <span class="difficulty-badge ${cDiff.class}">${cDiff.label} +${cDiff.points}pt</span>`;
+        }
 
         // 選択肢を作成（正解1つ + 全データからランダムに3つ）
         const options = [correctCountry];
@@ -410,9 +424,12 @@ class FlagQuizGame {
         if (isCorrect) {
             this.playSound('correct');
             selectedButton.classList.add('correct');
-            // コンボモード: 難易度別の点数、通常モード: 10点固定
-            const diffInfo = this.getDifficultyInfo();
-            this.score += this.comboMode ? diffInfo.points : 10;
+            // コンボモード: 国の難易度別の点数、通常モード: 10点固定
+            if (this.comboMode) {
+                this.score += this.currentComboDiff.points;
+            } else {
+                this.score += 10;
+            }
             this.updateScoreDisplay();
             feedbackIcon.textContent = '';
             feedbackText.textContent = '〇'; // 大正解から〇に変更
