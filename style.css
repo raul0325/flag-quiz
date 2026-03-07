@@ -179,6 +179,30 @@ header {
     filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
 }
 
+/* 画像ボタン（rec.png等を中に入れるボタン） */
+.btn-image {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    display: block;
+    margin: 0 auto;
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.btn-image:hover {
+    transform: scale(1.05);
+    filter: brightness(1.15);
+}
+
+.btn-image-img {
+    width: 100%;
+    max-width: 300px;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 3px 8px rgba(0, 0, 0, 0.4));
+}
+
 /* Buttons */
 .btn {
     padding: 16px;
