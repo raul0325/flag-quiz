@@ -28,7 +28,7 @@
             <header>
                 <img src="title.png" alt="世界の国旗クイズ - Flag Quiz Masters" class="title-image">
                 <button id="sound-toggle-btn" class="btn btn-secondary"
-                    style="padding: 6px 14px; font-size: 0.85rem; border-radius: 20px; width: auto; max-width: none; margin: 8px auto 0;">🔊
+                    style="padding: 6px 14px; font-size: 0.85rem; border-radius: 20px; width: auto; max-width: none; margin: 8px auto 0; color: #334155; border-color: #94a3b8;">🔊
                     音あり</button>
             </header>
             <div class="menu-content">
@@ -50,19 +50,21 @@
                     <!-- ふつう・むずかしいボタンを横並びに -->
                     <div style="display: flex; gap: 12px; width: 100%;">
                         <button id="start-hard-btn" class="btn btn-warning hidden" data-mode="2"
-                            style="flex: 1; font-size: 0.9rem; padding: 12px 0;">ふつうからはじめる</button>
+                            style="flex: 1; font-size: 0.9rem; padding: 10px 0; line-height: 1.4; white-space: normal;">ふつうから<br>はじめる</button>
                         <button id="start-extreme-btn" class="btn btn-danger hidden" data-mode="3"
-                            style="flex: 1; font-size: 0.9rem; padding: 12px 0;">むずかしいからはじめる</button>
+                            style="flex: 1; font-size: 0.9rem; padding: 10px 0; line-height: 1.4; white-space: normal;">むずかしいから<br>はじめる</button>
                     </div>
                 </div>
-                <button id="record-btn" class="btn-image" style="margin-top: 12px;"><img src="rec.png" alt="国旗マスターズレコード"
-                        class="btn-image-img"></button>
 
-                <!-- コンボチャレンジ -->
-                <div style="margin-top: 20px; text-align: center;">
+                <!-- コンボチャレンジ（先にもってくる） -->
+                <div style="margin-top: 16px; text-align: center;">
                     <button id="combo-btn" class="btn btn-combo">🔥 コンボチャレンジ！</button>
                     <p style="font-size: 0.8rem; color: #64748b; margin-top: 6px;">まちがえたらおわり！スコアはどこまでのびるかな？</p>
                 </div>
+
+                <!-- これまでの記録画像ボタン（下にもっていく） -->
+                <button id="record-btn" class="btn-image" style="margin-top: 24px;"><img src="rec.png" alt="国旗マスターズレコード"
+                        class="btn-image-img"></button>
             </div>
         </main>
 
