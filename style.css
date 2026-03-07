@@ -121,25 +121,46 @@ body {
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
 }
 
+/* header: 背景国旗からタイトルを守るためのガラスパネル */
+header {
+    background: rgba(15, 23, 42, 0.7);
+    padding: 24px 16px;
+    border-radius: 24px;
+    margin-bottom: 40px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    text-align: center;
+}
+
 /* Typography */
 .title {
-    font-size: 2.5rem;
-    font-weight: 700;
-    margin-bottom: 8px;
+    font-size: 2.8rem;
+    font-weight: 800;
+    margin-bottom: 12px;
     text-align: center;
-    /* 明るい背景に映えるカラフルなタイトルグラデーション */
-    background: linear-gradient(to right, #ec4899, #8b5cf6, #3b82f6);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
+    color: #ff7bc1;
+    /* キュートなピンク */
+    /* 白フチと落ち影で強烈にポップに */
+    text-shadow:
+        -2px -2px 0 #fff,
+        2px -2px 0 #fff,
+        -2px 2px 0 #fff,
+        2px 2px 0 #fff,
+        0px 4px 8px rgba(0, 0, 0, 0.6);
+    letter-spacing: 2px;
+    transform: rotate(-2deg);
+    /* 少し斜めでキュートさ演出 */
+    display: inline-block;
 }
 
 .subtitle {
-    color: var(--text-muted);
+    color: #cbd5e1;
     font-size: 1.1rem;
-    margin-bottom: 40px;
     text-align: center;
-    letter-spacing: 2px;
+    letter-spacing: 3px;
+    font-weight: 700;
 }
 
 /* Buttons */
