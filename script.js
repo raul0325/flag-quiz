@@ -82,6 +82,17 @@ class FlagQuizGame {
             this.showScreen('menu');
         });
 
+        // クイズ途中の「もどる」ボタン
+        const backBtn = document.getElementById('back-btn');
+        if (backBtn) {
+            backBtn.addEventListener('click', () => {
+                if (confirm('今のクイズをやめてメニューに戻りますか？')) {
+                    this.checkUnlockStatus();
+                    this.showScreen('menu');
+                }
+            });
+        }
+
         // 記録画面の開閉
         this.recordBtn.addEventListener('click', () => this.showRecordScreen());
         this.closeRecordBtn.addEventListener('click', () => this.showScreen('menu'));
@@ -435,6 +446,13 @@ class FlagQuizGame {
     showScreen(screenId) {
         Object.values(this.screens).forEach(screen => screen.classList.remove('active'));
         this.screens[screenId].classList.add('active');
+
+        // クイズ画面の時は bodyにクラスを付属（スマホ時に背景国旗を隐す）
+        if (screenId === 'quiz') {
+            document.body.classList.add('quiz-active');
+        } else {
+            document.body.classList.remove('quiz-active');
+        }
     }
 
     showLoading(show) {

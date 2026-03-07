@@ -594,3 +594,10 @@ body {
         transform: rotate(360deg);
     }
 }
+
+/* スマホ（幅600px以下）でクイズ中は背景国旗を隠す */
+@media (max-width: 600px) {
+    body.quiz-active #bg-flags {
+        display: none;
+    }
+}
