@@ -313,12 +313,40 @@ body {
 }
 
 .quiz-info {
-    display: flex;
-    justify-content: space-between;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    /* 左: もどる / 中央: 問題番号 / 右: スコア */
     align-items: center;
     margin-bottom: 12px;
     font-size: 1rem;
     font-weight: 700;
+}
+
+/* もどるボタン（左端） */
+.back-btn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    padding: 5px 12px;
+    border-radius: 20px;
+    cursor: pointer;
+    justify-self: start;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.back-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+}
+
+/* スコア（右端） */
+.score-container {
+    justify-self: end;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #fcd34d;
 }
 
 .progress-bar-container {
