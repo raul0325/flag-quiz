@@ -92,16 +92,18 @@ body {
 
 /* Buttons */
 .btn {
-    padding: 16px 32px;
-    border-radius: 16px;
+    padding: 16px;
+    border-radius: 12px;
     border: none;
     font-size: 1.1rem;
     font-weight: 700;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    transition: all 0.2s ease;
     width: 100%;
     max-width: 300px;
     margin-bottom: 12px;
+    white-space: nowrap;
+    /* スマホでテキストが縦になるのを防ぐ */
 }
 
 .btn-primary {
@@ -145,6 +147,79 @@ body {
 .stat-value {
     font-size: 2rem;
     font-weight: 700;
+}
+
+/* Menu & Mode Selection */
+.mode-buttons-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.unlock-message {
+    color: #fcd34d;
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 12px;
+    animation: bounce 2s infinite;
+}
+
+.unlock-message.hidden {
+    display: none;
+}
+
+.btn.hidden {
+    display: none;
+}
+
+.btn-warning {
+    background: #f59e0b;
+    color: white;
+    box-shadow: 0 4px 14px 0 rgba(245, 158, 11, 0.39);
+}
+
+.btn-warning:hover {
+    background: #d97706;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.45);
+}
+
+.btn-danger {
+    background: #ef4444;
+    color: white;
+    box-shadow: 0 4px 14px 0 rgba(239, 68, 68, 0.39);
+}
+
+.btn-danger:hover {
+    background: #dc2626;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.45);
+}
+
+/* Animation for unlock message */
+@keyframes bounce {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+@keyframes blink {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.3;
+    }
 }
 
 /* Quiz UI */
@@ -224,24 +299,30 @@ body {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
 }
 
+/* Options */
 .options-grid {
-    display: grid;
-    grid-template-columns: 1fr;
+    display: flex;
+    flex-direction: column;
     gap: 12px;
     width: 100%;
 }
 
 .option-btn {
-    padding: 18px;
-    background: var(--glass-bg);
+    padding: 16px;
+    background: rgba(255, 255, 255, 0.1);
     border: 1px solid var(--glass-border);
-    border-radius: 16px;
-    color: white;
-    font-size: 1rem;
+    border-radius: 12px;
+    color: var(--text-color);
+    font-size: 1.1rem;
     font-weight: 700;
     cursor: pointer;
-    transition: all 0.2s;
+    transition: all 0.2s ease;
     text-align: center;
+    white-space: nowrap;
+    /* テキストが縦になるのを防ぐ */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* はみ出した場合は「...」にする */
 }
 
 .option-btn:hover {
@@ -293,13 +374,25 @@ body {
 /* Feedback */
 .feedback-overlay {
     position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     pointer-events: none;
     opacity: 0;
     transition: opacity 0.3s;
     z-index: 10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(0, 0, 0, 0.5);
+    /* 暗くする背景 */
+}
+
+.feedback-overlay.interactive {
+    pointer-events: auto;
+    /* タップ待ちの時はイベントを有効化 */
+    cursor: pointer;
 }
 
 .feedback-overlay.active {
@@ -307,14 +400,40 @@ body {
 }
 
 .feedback-content {
-    background: rgba(0, 0, 0, 0.8);
-    padding: 20px 40px;
-    border-radius: 50px;
+    background: rgba(15, 23, 42, 0.95);
+    border: 2px solid var(--glass-border);
+    padding: 30px;
+    border-radius: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    max-width: 90%;
+}
+
+.feedback-header {
     display: flex;
     align-items: center;
     gap: 12px;
-    font-size: 1.5rem;
+    font-size: 2rem;
     font-weight: 700;
+}
+
+.feedback-details {
+    display: none;
+    text-align: center;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.feedback-flag {
+    width: 150px;
+    height: 100px;
+    object-fit: contain;
+    border-radius: 8px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 /* Result Screen */

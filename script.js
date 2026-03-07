@@ -12,26 +12,35 @@ class FlagQuizGame {
         this.maxQuestions = 10;
         this.usedIndices = new Set(); // 実際には name を保存して重複回避
         this.highScore = localStorage.getItem('flagQuizHighScore') || 0;
+        this.perfectCount = parseInt(localStorage.getItem('flagQuizPerfectCount') || '0', 10);
+        this.playCount = parseInt(localStorage.getItem('flagQuizPlayCount') || '0', 10);
 
         // 有名な国の定義（日本語名でマッチング）
+        // レベル1: 超有名・よく聞く国 (約30カ国)
+        // レベル2: 有名・スポーツやニュースで聞く国 (約25カ国)
         this.famousCountries = {
-            lv1: ["日本", "アメリカ", "中国", "フランス", "イタリア", "ドイツ", "イギリス", "韓国", "ブラジル", "カナダ", "スペイン"],
-            lv2: ["オーストラリア", "インド", "エジプト", "タイ", "スイス", "ロシア", "メキシコ", "シンガポール", "ポルトガル", "オランダ"],
-            lv3: ["アルゼンチン", "トルコ", "ギリシャ", "スウェーデン", "ベトナム", "インドネシア", "フィリピン", "フィンランド", "南アフリカ", "ベルギー"]
+            lv1: ["日本", "アメリカ", "中国", "フランス", "イタリア", "ドイツ", "イギリス", "韓国", "ブラジル", "カナダ", "スペイン", "ロシア", "インド", "オーストラリア", "エジプト", "メキシコ", "タイ", "台湾", "スイス", "アルゼンチン", "ニュージーランド", "ケニア", "サウジアラビア", "シンガポール", "ギリシャ", "トルコ", "オランダ", "スウェーデン", "ペルー", "モンゴル"],
+            lv2: ["ポルトガル", "ベルギー", "フィリピン", "ベトナム", "インドネシア", "マレーシア", "南アフリカ", "チリ", "コロンビア", "キューバ", "ジャマイカ", "ノルウェー", "フィンランド", "デンマーク", "ポーランド", "ウクライナ", "イラン", "イラク", "アラブ首長国連邦", "イスラエル", "モロッコ", "ナイジェリア", "ガーナ", "カンボジア", "ミャンマー"],
+            lv3: ["チェコ", "ハンガリー", "ルーマニア", "セルビア", "クロアチア", "アイルランド", "アイスランド", "カタール", "パキスタン", "バングラデシュ", "スリランカ", "ネパール", "キューバ", "パナマ", "コスタリカ", "ウルグアイ", "パラグアイ", "ボリビア", "エクアドル", "ベネズエラ"]
         };
 
         // UI Elements
         this.screens = {
             menu: document.getElementById('menu-screen'),
             quiz: document.getElementById('quiz-screen'),
-            result: document.getElementById('result-screen')
+            result: document.getElementById('result-screen'),
+            record: document.getElementById('record-screen') // 追加
         };
         this.loadingOverlay = document.getElementById('loading-overlay');
 
         // Buttons
         this.startBtn = document.getElementById('start-btn');
+        this.startHardBtn = document.getElementById('start-hard-btn');
+        this.startExtremeBtn = document.getElementById('start-extreme-btn');
         this.restartBtn = document.getElementById('restart-btn');
         this.backToMenuBtn = document.getElementById('back-to-menu-btn');
+        this.recordBtn = document.getElementById('record-btn');
+        this.closeRecordBtn = document.getElementById('close-record-btn');
 
         // Stats
         this.highScoreDisplay = document.getElementById('high-score');
@@ -49,14 +58,44 @@ class FlagQuizGame {
 
     async init() {
         this.updateHighScoreDisplay();
+        this.checkUnlockStatus();
         this.attachEventListeners();
         await this.loadCountryData();
     }
 
     attachEventListeners() {
-        this.startBtn.addEventListener('click', () => this.startGame());
-        this.restartBtn.addEventListener('click', () => this.startGame());
-        this.backToMenuBtn.addEventListener('click', () => this.showScreen('menu'));
+        this.startBtn.addEventListener('click', () => this.startGame(0));
+        this.startHardBtn.addEventListener('click', () => this.startGame(3)); // ふつう（4問目基準）からスタート
+        this.startExtremeBtn.addEventListener('click', () => this.startGame(5)); // むずかしい（6問目基準）からスタート
+        this.restartBtn.addEventListener('click', () => this.startGame(0));
+        this.backToMenuBtn.addEventListener('click', () => {
+            this.checkUnlockStatus();
+            this.showScreen('menu');
+        });
+
+        // 記録画面の開閉
+        this.recordBtn.addEventListener('click', () => this.showRecordScreen());
+        this.closeRecordBtn.addEventListener('click', () => this.showScreen('menu'));
+    }
+
+    checkUnlockStatus() {
+        const unlockMessage = document.getElementById('unlock-message');
+        if (this.perfectCount >= 3) {
+            unlockMessage.classList.remove('hidden');
+            this.startHardBtn.classList.remove('hidden');
+            this.startExtremeBtn.classList.remove('hidden');
+        } else {
+            unlockMessage.classList.add('hidden');
+            this.startHardBtn.classList.add('hidden');
+            this.startExtremeBtn.classList.add('hidden');
+        }
+    }
+
+    showRecordScreen() {
+        document.getElementById('record-play-count').textContent = this.playCount;
+        document.getElementById('record-high-score').textContent = this.highScore;
+        document.getElementById('record-perfect-count').textContent = this.perfectCount;
+        this.showScreen('record');
     }
 
     async loadCountryData() {
@@ -98,9 +137,12 @@ class FlagQuizGame {
         }
     }
 
-    startGame() {
+    startGame(difficultyOffset = 0) {
+        this.playCount++;
+        localStorage.setItem('flagQuizPlayCount', this.playCount);
+
         this.score = 0;
-        this.questionsCount = 0;
+        this.questionsCount = difficultyOffset; // ベースの難易度を底上げする
         this.usedIndices.clear();
         this.updateScoreDisplay();
         this.showScreen('quiz');
@@ -123,6 +165,9 @@ class FlagQuizGame {
     }
 
     nextQuestion() {
+        // オフセットにより maxQuestions を超える場合は終了（実質プレイ問題数は10問で固定せず、到達点で判定）
+        // 実際には10回解かせるため、maxQuestions ではなく fixed_turns で管理するべきだが、
+        // 今回の仕様設計としては「問題番号の表示」として 10 で終了とする
         if (this.questionsCount >= this.maxQuestions) {
             this.endGame();
             return;
@@ -130,6 +175,10 @@ class FlagQuizGame {
 
         this.questionsCount++;
         const diffInfo = this.getDifficultyInfo();
+
+        // オフセット開始時は1問目からカウントアップする表示調整も可能だが、
+        // 今回は「第X問」ではなく「（残り問題数）」にしなくても良い。
+        // シンプルに「現在のレベル」を見せる。
         this.questionNumberDisplay.innerHTML = `第 ${this.questionsCount} 問 <span class="difficulty-badge ${diffInfo.class}">${diffInfo.label}</span>`;
         this.progressBar.style.width = `${(this.questionsCount / this.maxQuestions) * 100}%`;
 
@@ -178,7 +227,6 @@ class FlagQuizGame {
     }
 
     handleAnswer(selectedButton, isCorrect) {
-        // すべてのボタンを無効化
         const buttons = this.optionsContainer.querySelectorAll('.option-btn');
         buttons.forEach(btn => btn.style.pointerEvents = 'none');
 
@@ -186,33 +234,65 @@ class FlagQuizGame {
         const feedbackIcon = document.getElementById('feedback-icon');
         const feedbackText = document.getElementById('feedback-text');
 
+        // 正解表示用の詳細エリア（HTMLに追加予定）
+        const feedbackDetails = document.getElementById('feedback-details');
+
         if (isCorrect) {
             selectedButton.classList.add('correct');
             this.score += 10;
             this.updateScoreDisplay();
             feedbackIcon.textContent = '✅';
-            feedbackText.textContent = '正解！';
+            feedbackText.textContent = '大正解！';
             feedbackText.style.color = '#10b981';
+            feedbackDetails.style.display = 'none'; // 正解時は詳細を隠す
+            feedbackOverlay.classList.remove('interactive'); // タップ待ちはしない
+
+            feedbackOverlay.classList.add('active');
+            setTimeout(() => {
+                feedbackOverlay.classList.remove('active');
+                this.nextQuestion();
+            }, 1200);
+
         } else {
             selectedButton.classList.add('wrong');
             feedbackIcon.textContent = '❌';
-            feedbackText.textContent = '残念...';
+            feedbackText.textContent = 'ざんねん...';
             feedbackText.style.color = '#ef4444';
+
+            // 不正解時は正解の国旗と国名を表示してタップ待ちにする
+            feedbackDetails.innerHTML = `
+                <div class="correct-answer-info">
+                    <p style="font-size: 1rem; color: #fff; margin-bottom: 8px;">せいかいは…</p>
+                    <img src="${this.currentQuestion.flag}" alt="正解の国旗" class="feedback-flag">
+                    <p style="font-size: 1.5rem; color: #fff; font-weight: bold;">${this.currentQuestion.name}</p>
+                    <p style="font-size: 0.9rem; color: #94a3b8; margin-top: 12px; animation: blink 1.5s infinite;">タップして次へ ➡</p>
+                </div>
+            `;
+            feedbackDetails.style.display = 'block';
+
             // 正解のボタンをハイライト
             buttons.forEach(btn => {
                 if (btn.textContent === this.currentQuestion.name) {
                     btn.classList.add('correct');
                 }
             });
+
+            // タップしてから次に進む処理
+            feedbackOverlay.classList.add('active');
+            feedbackOverlay.classList.add('interactive'); // CSSでポインターイベントを有効化するため
+
+            const advanceQuiz = () => {
+                feedbackOverlay.classList.remove('active');
+                feedbackOverlay.classList.remove('interactive');
+                feedbackOverlay.removeEventListener('click', advanceQuiz);
+                this.nextQuestion();
+            };
+
+            // 少しだけ遅延させてからクリックイベントを登録（誤爆防止）
+            setTimeout(() => {
+                feedbackOverlay.addEventListener('click', advanceQuiz);
+            }, 500);
         }
-
-        feedbackOverlay.classList.add('active');
-
-        // 次の問題へ（少し待機）
-        setTimeout(() => {
-            feedbackOverlay.classList.remove('active');
-            this.nextQuestion();
-        }, 1200);
     }
 
     endGame() {
@@ -222,8 +302,14 @@ class FlagQuizGame {
             this.updateHighScoreDisplay();
         }
 
+        // 100点（満点）だったら回数を記録
+        if (this.score === (this.maxQuestions * 10)) {
+            this.perfectCount++;
+            localStorage.setItem('flagQuizPerfectCount', this.perfectCount);
+        }
+
         this.finalScoreDisplay.textContent = this.score;
-        document.getElementById('correct-count').textContent = `${this.score / 10} / ${this.maxQuestions}`;
+        // 「正解数：7/10」の表示はHTMLから削除するため、ここでの更新処理も削除
         this.showScreen('result');
     }
 
