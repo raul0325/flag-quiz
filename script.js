@@ -223,6 +223,12 @@ class FlagQuizGame {
                     flagUrl = 'https://upload.wikimedia.org/wikipedia/commons/0/06/Flag_of_Venezuela.svg';
                 }
 
+                // アフガニスタン：APIがタリバン旗（白地）を返すため、
+                // 子ども向けとして旧国際承認旗（黒・赤・緑の三色旗）に固定する
+                if (commonName === 'アフガニスタン') {
+                    flagUrl = 'https://upload.wikimedia.org/wikipedia/commons/c/cd/Flag_of_Afghanistan_%282013%E2%80%932021%29.svg';
+                }
+
                 return {
                     name: commonName,
                     flag: flagUrl
