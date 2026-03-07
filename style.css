@@ -294,6 +294,10 @@ body {
     font-weight: 700;
     text-transform: uppercase;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    /* どの難易度文字でも同じ山幅を確保してレイアウトがずれないように */
+    min-width: 88px;
+    display: inline-block;
+    text-align: center;
 }
 
 .difficulty-badge.badge-easy {
@@ -320,6 +324,12 @@ body {
     margin-bottom: 12px;
     font-size: 1rem;
     font-weight: 700;
+}
+
+/* 問題番号（中央）→ 常に中央寄せで山幅が変わらないように */
+#question-number {
+    text-align: center;
+    white-space: nowrap;
 }
 
 /* もどるボタン（左端） */
