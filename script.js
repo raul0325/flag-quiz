@@ -201,7 +201,10 @@ class FlagQuizGame {
 
             // 日本語名がある国のみをフィルタリング
             this.countries = data.map(country => {
-                const commonName = country.translations?.jpn?.common || country.name.common;
+                // 日本語の翻訳データがない場合は除外するために undefined を返す
+                const commonName = country.translations?.jpn?.common;
+                if (!commonName) return null;
+
                 let flagUrl = country.flags.svg || country.flags.png;
 
                 // ベネズエラの国旗を「左上に紋章（イラスト）がある政府旗」に差し替え
@@ -213,7 +216,7 @@ class FlagQuizGame {
                     name: commonName,
                     flag: flagUrl
                 };
-            }).filter(c => c.name && c.flag);
+            }).filter(c => c !== null && c.name && c.flag);
 
             // 難易度別に分類
             this.countries.forEach(country => {
@@ -349,7 +352,7 @@ class FlagQuizGame {
             this.updateScoreDisplay();
             feedbackIcon.textContent = '';
             feedbackText.textContent = '〇'; // 大正解から〇に変更
-            feedbackText.style.color = '#10b981';
+            feedbackText.style.color = '#ef4444'; // 日本式（赤）に変更
             feedbackText.style.fontSize = '8rem'; // でかくする
             feedbackDetails.style.display = 'none'; // 正解時は詳細を隠す
             feedbackOverlay.classList.remove('interactive'); // タップ待ちはしない
@@ -366,7 +369,7 @@ class FlagQuizGame {
             selectedButton.classList.add('wrong');
             feedbackIcon.textContent = '';
             feedbackText.textContent = '✖'; // 残念から✖に変更
-            feedbackText.style.color = '#ef4444';
+            feedbackText.style.color = '#3b82f6'; // 青に変更
             feedbackText.style.fontSize = '8rem';
 
             // 不正解時は正解の国旗と国名を表示してタップ待ちにする
